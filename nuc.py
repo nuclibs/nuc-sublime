@@ -264,7 +264,7 @@ class NucSetBuildTargetCommand(sublime_plugin.WindowCommand):
         from .nuc import _nuc_, panel
 
         # view = self.window.active_view()
-        panel(self.window, _nuc_.get_targets(), self.on_target_select, 0, 1)
+        panel(self.window, _nuc_.get_targets(), self.on_target_select, 0, 0)
 
     def on_target_select(self, index):
         from .nuc import _nuc_
@@ -350,13 +350,13 @@ class NucBuild(Default.exec.ExecCommand):
         else:
             if _nuc_.build_type == "run":
                 cmd.append("run")
-            elif _nuc_.build_type == "compile":
-                cmd.append("build")
-                cmd.append("--compile")
             else:
                 cmd.append("build")
 
             cmd.append(_nuc_.target)
+
+            if _nuc_.build_type == "compile":
+                cmd.append("--compile")
 
             if _nuc_.build_debug:
                 cmd.append("--debug")
