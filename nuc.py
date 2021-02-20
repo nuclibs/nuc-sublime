@@ -214,6 +214,7 @@ class NucSetBuildSettingsCommand(sublime_plugin.WindowCommand):
                 _nuc_.build_debug = True
 
             print("[nuc] toggle build debug, now at " + str(_nuc_.build_debug))
+            self.run(sel_index=2)
 
             #verbose flag
         if index == 3:

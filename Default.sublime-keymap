@@ -19,7 +19,7 @@
             {
                 "key": "selector",
                 "operator": "equal",
-                "operand": "source.nuc, source.haxe"
+                "operand": "source.nuc, source.hx"
             }
         ]
     }

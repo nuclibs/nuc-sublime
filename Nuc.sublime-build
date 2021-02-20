@@ -2,7 +2,7 @@
     "target": "nuc_build",
   	"cmd": "build",
     "file_regex" : "(?:(?:(^.*[.]hx):([0-9]+): (?:characters|lines) (?:\\d+(-)?\\d+)) +:(.+))",
-    "selector": "source.nuc, source.haxe, source.hxml",
+    "selector": "source.nuc, source.hx, source.hxml",
 
     "variants": [
     //   { 
