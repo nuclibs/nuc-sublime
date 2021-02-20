@@ -1,0 +1,229 @@
+%YAML 1.2
+---
+# See http://www.sublimetext.com/docs/3/syntax.html
+file_extensions:
+  - nuc
+scope: source.nuc
+
+variables:
+  ws: '[ \t]*'
+  wsnl: '([ \t\n])*'
+
+  # Used to detect the possible start of a key.
+  peek_key_start: '(?=[A-Za-z0-9_''"-])'
+  dot_peek_key: '{{ws}}(\.){{ws}}{{peek_key_start}}'
+
+contexts:
+  main:
+    - include: comments
+    - include: module
+    - include: keyval
+
+  comments:
+    - match: '((#).*)'
+      captures:
+        1: comment.line.number-sign.nuc
+        2: punctuation.definition.comment.nuc
+
+  keyval:
+    - match: '{{peek_key_start}}'
+      push: [keyval_sep, key]
+
+  keyval_sep:
+    - match: '{{ws}}(:){{ws}}'
+      captures:
+        1: keyword.operator.assignment.nuc
+      set: [maybe_comment_eol, data_types]
+    - match: '{{ws}}$'
+      # Don't show an incomplete line as invalid to avoid flickering.
+      pop: true
+    - match: '.+$'
+      scope: invalid.illegal.keyval.nuc
+      pop: true
+
+  key:
+    - meta_scope: meta.tag.key.nuc
+    - match: '{{peek_key_start}}'
+      # push: [maybe-dot-key, key-simple]
+      push: key_simple
+    - match: '(?={{ws}}:)'
+      pop: true
+    - match: '{{ws}}$'
+      # Early exit to avoid errors while typing.
+      pop: true
+    - match: '.'
+      scope: invalid.illegal.key.nuc
+      pop: true
+
+  key_simple:
+    - match: '[A-Za-z0-9_-]+'
+      scope: entity.name.tag.nuc
+      pop: true
+    # - include: data_types
+    # - include: key-quoted
+    - include: string
+    - match: '\S+'
+      scope: invalid.illegal.key.nuc
+      pop: true
+
+  # key-quoted:
+    # - include: string
+    # - include: literal-string
+
+  module:
+    - match: '(\<){{ws}}'
+      # std-module = ws "[" ws key (ws "." ws key)* ws "]" ws comment?
+      captures:
+        1: punctuation.definition.module.begin.nuc
+      push: module_name
+
+  module_name:
+    - meta_content_scope: entity.name.class.nuc
+    - match: '{{ws}}(\>)'
+      captures:
+        1: punctuation.definition.module.end.nuc
+      pop: true
+    - include: module_name_inc
+
+  module_name_inc:
+    - match: '{{peek_key_start}}'
+      push: [maybe_dot_module_name, module_name_simple]
+      # push: [maybe_dot_module_name]
+    - match: '[^\]]+\]?'
+      scope: invalid.illegal.module.nuc
+      pop: true
+
+  maybe_dot_module_name:
+    - match: '{{dot_peek_key}}'
+      captures:
+        1: punctuation.separator.module.nuc
+      push: module_name_simple
+    - match: '(?={{ws}}(?:\>|$))'
+      pop: true
+    - match: '.'
+      scope: invalid.illegal.module.nuc
+      pop: true
+
+  maybe_comment_eol:
+    - include: comments
+    - match: '$'
+      pop: true
+    - match: '.+'
+      scope: invalid.illegal.trailing.nuc
+      pop: true
+
+  module_name_simple:
+    - match: '[A-Za-z0-9_-]+'
+      scope: entity.name.module.nuc
+      pop: true
+    # - include: string
+    - match: '.'
+      scope: invalid.illegal.module.nuc
+      pop: true
+
+  data_types:
+    - include: number
+    - include: boolean
+    - include: string
+    - include: array
+    - include: map
+
+  map:
+    - match: '\{'
+      scope: punctuation.definition.map.begin.nuc
+      set: [maybe_empty_map, maybe_array_comments]
+
+  maybe_empty_map:
+    - match: '\}'
+      scope: punctuation.definition.map.end.nuc
+      pop: true
+    - match: ''
+      set: [map_sep, data_types]
+
+  map_sep:
+    - match: '{{wsnl}}'
+    - include: comments
+    - match: '}'
+      scope: punctuation.definition.map.end.nuc
+      pop: true
+    - match: ','
+      scope: punctuation.separator.map.nuc
+      set:
+        - match: '{{wsnl}}'
+        - include: comments
+        - match: '}'
+          scope: punctuation.definition.map.end.nuc
+          pop: true
+        - match: '(?=[^\n])'
+          set: [map_sep, data_types]
+    - match: '\w+|.'
+      scope: invalid.illegal.map.nuc
+
+  maybe_array_comments:
+    - match: '{{wsnl}}'
+    - include: comments
+    - match: '(?=[^\n])'
+      pop: true
+
+  array:
+    - match: '\['
+      scope: punctuation.definition.array.begin.nuc
+      set: [maybe_empty_array, maybe_array_comments]
+
+  maybe_empty_array:
+    - match: '\]'
+      scope: punctuation.definition.array.end.nuc
+      pop: true
+    - match: ''
+      set: [array_sep, data_types]
+
+  array_sep:
+    - match: '{{wsnl}}'
+    - include: comments
+    - match: ']'
+      scope: punctuation.definition.array.end.nuc
+      pop: true
+    - match: ','
+      scope: punctuation.separator.array.nuc
+      set:
+        - match: '{{wsnl}}'
+        - include: comments
+        - match: ']'
+          scope: punctuation.definition.array.end.nuc
+          pop: true
+        - match: '(?=[^\n])'
+          set: [array_sep, data_types]
+    - match: '\w+|.'
+      scope: invalid.illegal.array.nuc
+
+  boolean:
+    - match: (true|false)
+      comment: Boolean
+      captures:
+        1: constant.language.nuc
+      pop: true
+
+  number:
+    - match: '\b(-)?[0-9.]+\b'
+      comment: Number
+      scope: constant.numeric.nuc
+      pop: true
+
+  string:
+    - match: "'"
+      scope: punctuation.definition.string.begin.nuc
+      set:
+        - meta_scope: string.quoted.double.basic.nuc
+        # - include: string_escape
+        - match: "'"
+          scope: punctuation.definition.string.end.nuc
+          pop: true
+        - match: '\n'
+          scope: invalid.illegal.string.non-terminated.nuc
+          pop: true
+
+  string_escape:
+    - match: '\\(?:[btnfr"\\]|u\h{4}|U\h{8})'
+      scope: constant.character.escape.nuc
+    - match: '\\.'
+      scope: invalid.illegal.string.escape.nuc

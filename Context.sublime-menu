@@ -1,0 +1,4 @@
+[
+   { "id": "Nuc", "command": "nuc_set_project_context", "caption": "Set as current Nuc project file" },
+   { "id": "Nuc", "command": "nuc_set_build_settings", "caption": "Set Nuc build settings" }
+]

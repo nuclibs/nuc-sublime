@@ -1,0 +1,8 @@
+[
+    { "caption": "Nuc: build", "command": "nuc_build" },
+    { "caption": "Nuc: set build target", "command": "nuc_set_build_target" },
+    { "caption": "Nuc: set build settings", "command": "nuc_set_build_settings" },
+    { "caption": "Nuc: set project file", "command": "nuc_set_project" },
+    { "caption": "Nuc: set autocompletion", "command": "nuc_set_autocompletion" },
+    { "caption": "Nuc: start server", "command": "nuc_server" },
+]

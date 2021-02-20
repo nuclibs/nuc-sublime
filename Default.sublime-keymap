@@ -1,0 +1,26 @@
+[
+    {
+        "keys": ["ctrl+alt+b"],
+        "command": "nuc_set_build_settings",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.nuc, source.hxml"
+            }
+        ]
+    },
+    {
+        "keys": ["ctrl+alt+t"],
+        "command": "nuc_set_target_build",
+        "context":
+        [
+            {
+                "key": "selector",
+                "operator": "equal",
+                "operand": "source.nuc, source.haxe"
+            }
+        ]
+    }
+]

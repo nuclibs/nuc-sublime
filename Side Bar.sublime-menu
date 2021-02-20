@@ -1,0 +1,3 @@
+[
+   { "caption": "Set as current Nuc project file", "command": "nuc_set_project", },
+]

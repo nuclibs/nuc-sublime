@@ -1,0 +1,24 @@
+{
+    "target": "nuc_build",
+  	"cmd": "build",
+    "file_regex" : "(?:(?:(^.*[.]hx):([0-9]+): (?:characters|lines) (?:\\d+(-)?\\d+)) +:(.+))",
+    "selector": "source.nuc, source.haxe, source.hxml",
+
+    "variants": [
+    //   { 
+    //     "name": "Compile",
+    // 	"target": "nuc_build",
+  		// "cmd": "compile"
+    //   },
+    //   { 
+    //     "name": "Run",
+    // 	"target": "nuc_build",
+  		// "cmd": "run"
+    //   },
+    //   { 
+    //     "name": "Launch",
+    // 	"target": "nuc_build",
+  		// "cmd": "launch"
+    //   }
+    ]
+}
