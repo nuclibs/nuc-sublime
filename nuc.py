@@ -269,7 +269,7 @@ class NucSetBuildTargetCommand(sublime_plugin.WindowCommand):
     def on_target_select(self, index):
         from .nuc import _nuc_
 
-        if index > 0:
+        if index >= 0:
             _nuc_.set_nuc_target_by_index(index)
 
     # def is_visible(self):
