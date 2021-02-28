@@ -14,7 +14,7 @@ class NucProject(sublime_plugin.EventListener):
         self.build_noshaders = False
         self.build_nohaxe = False
         self.build_watch = False
-        self.build_type = "build"
+        self.build_type = "compile"
         self.nuc_file = ""
         self.nuc_file_type = ""
         # self.hxml_file = ""
@@ -255,6 +255,8 @@ class NucSetBuildSettingsCommand(sublime_plugin.WindowCommand):
 class NucServerCommand(sublime_plugin.WindowCommand):
 
     def run(self):
+        working_dir = _nuc_.get_working_dir()
+        os.chdir(working_dir)
         os.system("haxelib run nuc server")
 
 
