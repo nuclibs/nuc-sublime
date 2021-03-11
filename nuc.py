@@ -190,8 +190,6 @@ class NucSetBuildSettingsCommand(sublime_plugin.WindowCommand):
 
     def run(self, sel_index=0):
         from .nuc import _nuc_, panel
-
-        view = self.window.active_view()
         panel(self.window, _nuc_.get_build_settings(), self.on_select, sel_index=sel_index)
 
     def on_select(self, index):
@@ -242,12 +240,17 @@ class NucSetBuildSettingsCommand(sublime_plugin.WindowCommand):
 
             self.run(sel_index=4)
 
+    def is_enabled(self):
+        return _nuc_.nuc_file != ""
+
     def is_visible(self):
         view = self.window.active_view()
         pt = view.sel()[0].b
         scope = view.scope_name(pt)
 
-        if ("source.nuc" in scope) or ("source.hxml" in scope):
+        has_nuc_file = _nuc_.nuc_file != ""
+
+        if has_nuc_file or ("source.nuc" in scope) or ("source.hxml" in scope):
             return True
         else:
             return False
@@ -274,17 +277,8 @@ class NucSetBuildTargetCommand(sublime_plugin.WindowCommand):
         if index >= 0:
             _nuc_.set_nuc_target_by_index(index)
 
-    # def is_visible(self):
-    #     from ..nuc import _nuc_
-
-    #     view = self.window.active_view()
-    #     pt = view.sel()[0].b
-    #     scope = view.scope_name(pt)
-    #     if ("source.nuc" in scope):
-    #         if _nuc_.nuc_file:
-    #             return True
-
-    #     return False
+    def is_visible(self):
+        return _nuc_.nuc_file != ""
 
 
 class NucBuild(Default.exec.ExecCommand):
