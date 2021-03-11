@@ -55,7 +55,7 @@ class NucProject(sublime_plugin.EventListener):
 
     def set_hxml_autocomplete(self, build):
         working_dir = _nuc_.get_working_dir()
-        hxml_path = working_dir + '/build/project-' + self.target + '.hxml'
+        hxml_path = working_dir + '\\build\\project-' + self.target + '.hxml'
         if os.path.isfile(hxml_path):
             # print ("[nuc] found hxml file, set autocompletion for " + hxml_path)
             self.set_hxml_file(hxml_path)
@@ -152,9 +152,15 @@ class NucSetProjectContextCommand(sublime_plugin.TextCommand):
         _nuc_.set_nuc_file(self.view.file_name())
         print("[nuc] set project file")
 
+    def is_enabled(self):
+        same_project_file = _nuc_.nuc_file == str(self.view.file_name())
+        return not same_project_file
+
     def is_visible(self):
         pt = self.view.sel()[0].b
         scope = self.view.scope_name(pt)
+        # same_project_file = _nuc_.nuc_file == str(self.view.file_name())
+        # if not same_project_file and ("source.nuc" in scope) or ("source.hxml" in scope):
         if ("source.nuc" in scope) or ("source.hxml" in scope):
             return True
         else:
@@ -165,15 +171,21 @@ class NucSetProjectCommand(sublime_plugin.WindowCommand):
     def run(self):
         from .nuc import _nuc_
 
-        # view = self.window.active_view()
-        _nuc_.set_nuc_file(self.view.file_name())
+        view = self.window.active_view()
+        _nuc_.set_nuc_file(view.file_name())
         print("[nuc] run nuc set project file")
+
+    def is_enabled(self):
+        view = self.window.active_view()
+        same_project_file = _nuc_.nuc_file == str(view.file_name())
+        return not same_project_file
 
     def is_visible(self):
         view = self.window.active_view()
         pt = view.sel()[0].b
         scope = view.scope_name(pt)
-
+        # same_project_file = _nuc_.nuc_file == str(view.file_name())
+        # if not same_project_file and ("source.nuc" in scope) or ("source.hxml" in scope):
         if ("source.nuc" in scope) or ("source.hxml" in scope):
             return True
         else:
@@ -240,17 +252,18 @@ class NucSetBuildSettingsCommand(sublime_plugin.WindowCommand):
 
             self.run(sel_index=4)
 
-    def is_enabled(self):
-        return _nuc_.nuc_file != ""
+    # def is_enabled(self):
+        # return _nuc_.nuc_file != ""
 
     def is_visible(self):
         view = self.window.active_view()
         pt = view.sel()[0].b
         scope = view.scope_name(pt)
 
-        has_nuc_file = _nuc_.nuc_file != ""
+        has_nuc_file = _nuc_.nuc_file != "" and _nuc_.nuc_file_type != "hxml"
 
-        if has_nuc_file or ("source.nuc" in scope) or ("source.hxml" in scope):
+        # if has_nuc_file or ("source.nuc" in scope) or ("source.hxml" in scope):
+        if has_nuc_file:
             return True
         else:
             return False
