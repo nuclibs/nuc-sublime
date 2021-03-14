@@ -68,7 +68,8 @@ class NucProject(sublime_plugin.EventListener):
                 build_nohaxe = self.build_nohaxe
                 self.build_noshaders = True
                 self.build_nohaxe = True
-                sublime.active_window().run_command("nuc_build", "silent")
+                # sublime.active_window().run_command("nuc_build", "silent")
+                sublime.active_window().run_command("nuc_build")
                 self.build_noshaders = build_noshaders
                 self.build_nohaxe = build_nohaxe
             else:
@@ -315,7 +316,7 @@ class NucBuild(Default.exec.ExecCommand):
 
         from .nuc import _nuc_
 
-        print(cmd)
+        # print(cmd)
 
         if not _nuc_.nuc_file and _nuc_.nuc_file == "":
             sublime.status_message("can't build, nuc file is not set")
